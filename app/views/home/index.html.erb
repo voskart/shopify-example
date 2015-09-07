@@ -7,14 +7,47 @@
   });
 </script>
 <h3>Products</h3>
-<table>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Product-ID</th>
+      <th>Product-Title</th>
+      <th>Product-Type</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
   <tbody>
     <% @products.each do |product| %>
       <tr>
         <td>
           <a href='https://<%="#{@shop_session.url}/admin/products/#{product.id}"%>' target="_blank"> <%= product.id %> </a>
         </td>
+        <td><%= product.title %></td>
+        <td><%= product.product_type %></td>
       </tr>
     <% end %>
+  </tbody>
+</table>
+
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Order-ID</th>
+      <th>Order-Name</th>
+      <th>Total Price</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><%= order.id %></td>
+        <td><%= order.name %></td>
+        <td><%= order.total_price %></td>
+        <td>Fulfilment-Button</td>
+      </tr>
+      <%end%>
   </tbody>
 </table>
