@@ -7,5 +7,5 @@ I am using the shopify-app gem provided by Shopify, the authentication process i
 * clone this repository: git clone https://github.com/ginetrix/shopify-example.git
 * bundle install
 * rake db:migrate (rake db:setup)
-* set the variables in *environment_variables.yml*
+* **Important:** this application uses *dotenv*, to set your variables simply create a .env.development file in your app-root
 * thin start --ssl
