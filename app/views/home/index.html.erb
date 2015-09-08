@@ -6,6 +6,7 @@
     });
   });
 </script>
+
 <h3>Products</h3>
 <table class="table table-striped">
   <thead>
@@ -13,7 +14,7 @@
       <th>Product-ID</th>
       <th>Product-Title</th>
       <th>Product-Type</th>
-      <th colspan="2"></th>
+      <th colspan="3"></th>
     </tr>
   </thead>
   <tbody>
@@ -23,7 +24,7 @@
           <a href='https://<%="#{@shop_session.url}/admin/products/#{product.id}"%>' target="_blank"> <%= product.id %> </a>
         </td>
         <td><%= product.title %></td>
-        <td><%= product.product_type %></td>
+        <td><%= product.product_type.present? ? product.product_type : "Not available" %></td>
       </tr>
     <% end %>
   </tbody>
@@ -36,7 +37,7 @@
       <th>Order-ID</th>
       <th>Order-Name</th>
       <th>Total Price</th>
-      <th colspan="2"></th>
+      <th colspan="3"></th>
     </tr>
   </thead>
 
@@ -51,3 +52,4 @@
       <%end%>
   </tbody>
 </table>
+

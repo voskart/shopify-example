@@ -15,4 +15,5 @@
 //= require turbolinks
 //= require bootstrap
 //= require npm
+//= require jquery.qtip.min
 //= require_tree .
