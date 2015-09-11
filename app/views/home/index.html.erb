@@ -30,7 +30,7 @@
   </tbody>
 </table>
 
-
+<h3>Orders</h3>
 <table class="table table-striped">
   <thead>
     <tr>
@@ -47,7 +47,7 @@
         <td><%= order.id %></td>
         <td><%= order.name %></td>
         <td><%= order.total_price %></td>
-        <td>Fulfilment-Button</td>
+        <td><%= link_to "Fulfil Order", fulfilment_fulfil_order_path(:order_id => order.id, :shop_url => @shop_session.url), :remote => true %></td>
       </tr>
       <%end%>
   </tbody>

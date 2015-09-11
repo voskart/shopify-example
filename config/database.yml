@@ -83,5 +83,5 @@ test:
 production:
   <<: *default
   database: shopify-example_production
-  username: shopify-example
+  username: shopex
   password: <%= ENV['MY-FANCY-PRODUCTION-PASSWORD'] %>

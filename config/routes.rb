@@ -3,9 +3,18 @@ Rails.application.routes.draw do
   get 'billing/confirm'
   get 'billing/error'
 
+  get 'fulfilment/fulfil_order' 
+
   root :to => 'home#index'
 
   mount ShopifyApp::Engine, at: '/'
+
+  controller :sessions do
+    get 'login' => :new, :as => :login
+    post 'login' => :create, :as => :authenticate
+    get 'auth/shopify/callback' => :callback
+    get 'logout' => :destroy, :as => :logout
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

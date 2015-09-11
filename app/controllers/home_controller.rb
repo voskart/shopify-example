@@ -10,21 +10,21 @@ class HomeController < AuthenticatedController
 =end
 
   def index
-  	# Check if the charge is active
+  	# Check if the charge is valid
   	if (ShopifyAPI::RecurringApplicationCharge.current)
     	@products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
     	@orders = ShopifyAPI::Order.find(:all, :params => {:limit => 10})
     else
     	# Retrieve the current shop-domain
-		current_url = ShopifyAPI::Shop.current.myshopify_domain
-		# If the user is coming from his apps-page (host matches the domain)
-		if (URI(request.referer).host ==  current_url)
-			# Redirect him to an error-page
+		  current_url = ShopifyAPI::Shop.current.myshopify_domain
+		  # If the user is coming from his apps-page (host matches the domain)
+		  if (URI(request.referer).host ==  current_url)
+			  # Redirect him to an error-page
         	redirect_to billing_error_path
-        else
-        	# Otherwise he got here from the store
-        	redirect_to billing_index_path(:shop_url => current_url)
-    	end
-	end
+      else
+    	  # Otherwise he got here from the store
+       	  redirect_to billing_index_path(:shop_url => current_url)
+      end
+	  end
   end
 end
