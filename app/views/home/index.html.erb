@@ -47,7 +47,12 @@
         <td><%= order.id %></td>
         <td><%= order.name %></td>
         <td><%= order.total_price %></td>
-        <td><%= link_to "Fulfil Order", fulfilment_fulfil_order_path(:order_id => order.id, :shop_url => @shop_session.url), :remote => true %></td>
+        <td>
+          <% if order.fulfillments.empty? %>
+          <%= link_to "Fulfil Order", fulfilment_fulfil_order_path(:order_id => order.id, :shop_url => @shop_session.url), :remote => true %>
+          <% else %>
+            Fulfilled
+          <% end %></td>
       </tr>
       <%end%>
   </tbody>
