@@ -11,7 +11,6 @@ class HomeController < AuthenticatedController
 
   def index
     # First we need to check if the shop already exists in our db
-    session[:shop] = ShopifyAPI::Shop.current.myshopify_domain
     if (Shop.where(shopify_domain: @shop_session.url).present?)
   	  # Check if there is a charge present
   	  if (ShopifyAPI::RecurringApplicationCharge.current)
@@ -29,7 +28,7 @@ class HomeController < AuthenticatedController
       # If there is no charge, bill him
       else
         # If he is coming from his apps-page
-        if (request.referer == "https://#{@shop_session.url}/admin/apps/ENV['SHOPIFY_APP']")
+        if (request.referer == "https://#{@shop_session.url}/admin/apps/#{ENV['SHOPIFY_APP']}")
           redirect_to billing_error_path
         # Callback after he is accepting charges
         elsif (URI(request.referer).host == @shop_session.url)

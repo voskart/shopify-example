@@ -22,7 +22,7 @@ class BillingController < ApplicationController
   		ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id]).activate
   		redirect_to root_path
   	rescue => error
-  		redirect_to "https://apps.shopify.com/#{session[:shop]}"
+  		redirect_to "https://apps.shopify.com/#{ENV['SHOPIFY_APP']}"
   	end
   end
 end
