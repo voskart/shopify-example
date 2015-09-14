@@ -11,38 +11,40 @@ class HomeController < AuthenticatedController
 
   def index
     # First we need to check if the shop already exists in our db
+    session[:shop] = ShopifyAPI::Shop.current.myshopify_domain
     if (Shop.where(shopify_domain: @shop_session.url).present?)
   	  # Check if there is a charge present
   	  if (ShopifyAPI::RecurringApplicationCharge.current)
         # Check the status, if pending AND the user is coming from the app-store
-        if (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending' && URI(request.referer).host == "apps.shopify.com")
+        if (ShopifyAPI::RecurringApplicationCharge.current.status == 'pending' && URI(request.referer).host == "apps.shopify.com")
           redirect_to billing_index_path(:shop_url => @shop_session.url)
         # If the status is pending AND the user comes from the app-store
-        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending' && URI(request.referer).host == @shop_session.url)
+        elsif (ShopifyAPI::RecurringApplicationCharge.current.status == 'pending' && URI(request.referer).host == @shop_session.url)
           redirect_to billing_error_path
         # If the status is active, render the page
-        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'active')          
+        elsif (ShopifyAPI::RecurringApplicationCharge.current.status == 'active')          
           @products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
           @orders = ShopifyAPI::Order.find(:all, :params => {:limit => 10})
         end
       # If there is no charge, bill him
       else
-        # If the user is coming from his apps-page
-        if (URI(request.referer).host ==  @shop_session.url)
+        # If he is coming from his apps-page
+        if (request.referer == "https://#{@shop_session.url}/admin/apps/ENV['SHOPIFY_APP']")
           redirect_to billing_error_path
-        # If he is coming from the app store, show the charge prompt 
-        else
+        # Callback after he is accepting charges
+        elsif (URI(request.referer).host == @shop_session.url)
+          redirect_to billing_index_path(:shop_url => @shop_session.url)
+        # If he is coming from the app-store
+        elsif (URI(request.referer).host == "apps.shopify.com")
           redirect_to billing_index_path(:shop_url => @shop_session.url)
         end
       end
     else
-  	  # If the user is coming from his apps-page (host matches the domain)
+      # Callback after he is accepting charges
   		if (URI(request.referer).host ==  @shop_session.url)
-  		  # Redirect him to an error-page
-        redirect_to billing_error_path
-      else
-      	# Otherwise he got here from the store
         redirect_to billing_index_path(:shop_url => @shop_session.url)
+      else
+        redirect_to billing_error_path
         end
       end
     end
