@@ -14,10 +14,14 @@ class HomeController < AuthenticatedController
     if (Shop.where(shopify_domain: @shop_session.url).present?)
   	  # Check if there is a charge present
   	  if (ShopifyAPI::RecurringApplicationCharge.current)
-        # Check the status, if pending 
-        if (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending')
+        # Check the status, if pending AND the user is coming from the app-store
+        if (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending' && URI(request.referer).host == "apps.shopify.com")
           redirect_to billing_index_path(:shop_url => @shop_session.url)
-        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'active')
+        # If the status is pending AND the user comes from the app-store
+        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending' && URI(request.referer).host == @shop_session.url)
+          redirect_to billing_error_path
+        # If the status is active, render the page
+        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'active')          
           @products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
           @orders = ShopifyAPI::Order.find(:all, :params => {:limit => 10})
         end
