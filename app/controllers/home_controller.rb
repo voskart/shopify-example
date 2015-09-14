@@ -10,20 +10,35 @@ class HomeController < AuthenticatedController
 =end
 
   def index
-  	# Check if the charge is valid
-  	if (ShopifyAPI::RecurringApplicationCharge.current)
-    	@products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
-    	@orders = ShopifyAPI::Order.find(:all, :params => {:limit => 10})
+    # First we need to check if the shop already exists in our db
+    if (Shop.where(shopify_domain: @shop_session.url).present?)
+  	  # Check if there is a charge present
+  	  if (ShopifyAPI::RecurringApplicationCharge.current)
+        # Check the status, if pending 
+        if (ShopifyAPI::RecurringApplicationCharge.current.status = 'pending')
+          redirect_to billing_index_path(:shop_url => @shop_session.url)
+        elsif (ShopifyAPI::RecurringApplicationCharge.current.status = 'active')
+          @products = ShopifyAPI::Product.find(:all, :params => {:limit => 10})
+          @orders = ShopifyAPI::Order.find(:all, :params => {:limit => 10})
+        end
+      # If there is no charge, bill him
+      else
+        # If the user is coming from his apps-page
+        if (URI(request.referer).host ==  @shop_session.url)
+          redirect_to billing_error_path
+        # If he is coming from the app store, show the charge prompt 
+        else
+          redirect_to billing_index_path(:shop_url => @shop_session.url)
+        end
+      end
     else
-    	# Retrieve the current shop-domain
-		  current_url = ShopifyAPI::Shop.current.myshopify_domain
 		  # If the user is coming from his apps-page (host matches the domain)
-		  if (URI(request.referer).host ==  current_url)
+		  if (URI(request.referer).host ==  @shop_session.url)
 			  # Redirect him to an error-page
         	redirect_to billing_error_path
       else
     	  # Otherwise he got here from the store
-       	  redirect_to billing_index_path(:shop_url => current_url)
+       	  redirect_to billing_index_path(:shop_url => @shop_session.url)
       end
 	  end
   end
